@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0d1b3e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="اتو پورمند">
+<title>اتو پورمند | تقویم روزانه</title>
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    background: radial-gradient(ellipse at top, #112255 0%, #0a1020 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Vazirmatn', Tahoma, sans-serif;
+    direction: rtl;
+    padding: 20px;
+    gap: 24px;
+    overflow: hidden;
+  }
+
+  /* stars bg */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 20% 30%, #ffffff22 0%, transparent 100%),
+      radial-gradient(1px 1px at 80% 10%, #ffffff18 0%, transparent 100%),
+      radial-gradient(1px 1px at 50% 80%, #ffffff15 0%, transparent 100%),
+      radial-gradient(1px 1px at 10% 60%, #ffffff20 0%, transparent 100%),
+      radial-gradient(1px 1px at 90% 70%, #ffffff18 0%, transparent 100%);
+    pointer-events: none;
+  }
+
+  /* ===== STICKER ===== */
+  .sticker {
+    width: min(320px, 88vw);
+    height: min(320px, 88vw);
+    border-radius: 36px;
+    background: linear-gradient(145deg, #0d1b3e 0%, #112255 50%, #0a1630 100%);
+    border: 2px solid #C9A84C55;
+    box-shadow:
+      0 0 0 1px #C9A84C22,
+      0 12px 50px #00000099,
+      0 0 80px #C9A84C11,
+      inset 0 1px 0 #C9A84C33;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 22px 20px 18px;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.15s ease;
+  }
+
+  .sticker:active { transform: scale(0.97); }
+
+  .sticker::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, #C9A84C, #FFD700, #C9A84C, transparent);
+  }
+
+  .sticker::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #C9A84C88, transparent);
+  }
+
+  .glow-bg {
+    position: absolute;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, #C9A84C15 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  .brand {
+    display: flex; flex-direction: column;
+    align-items: center; gap: 4px; z-index: 1;
+  }
+
+  .brand-name {
+    font-size: 20px; font-weight: 900;
+    color: #C9A84C;
+    text-shadow: 0 0 20px #C9A84C66;
+  }
+
+  .brand-sub {
+    font-size: 10px; color: #7090CC;
+    letter-spacing: 2px; direction: ltr;
+  }
+
+  .divider-gold {
+    width: 120px; height: 1px;
+    background: linear-gradient(90deg, transparent, #C9A84C, transparent);
+    margin-top: 4px;
+  }
+
+  .date-block {
+    display: flex; flex-direction: column;
+    align-items: center; gap: 2px; z-index: 1;
+  }
+
+  .day-name-fa {
+    font-size: 15px; color: #C9A84C; font-weight: 700;
+  }
+
+  .day-number {
+    font-size: clamp(72px, 22vw, 88px);
+    font-weight: 900; line-height: 1;
+    color: #ffffff;
+    text-shadow: 0 0 30px #C9A84C55, 0 2px 0 #C9A84C44;
+    letter-spacing: -4px; direction: ltr;
+  }
+
+  .month-year-fa {
+    font-size: 20px; color: #C9A84C;
+    font-weight: 700; margin-top: -6px;
+  }
+
+  .miladi-row {
+    display: flex; align-items: center;
+    gap: 8px; z-index: 1;
+  }
+
+  .miladi-line { width: 40px; height: 1px; background: #C9A84C44; }
+
+  .miladi-text { font-size: 11px; color: #8899BB; direction: ltr; }
+
+  /* ===== CONTROLS ===== */
+  .controls {
+    display: flex; flex-direction: column;
+    align-items: center; gap: 14px;
+    width: min(320px, 88vw);
+  }
+
+  .nav-row { display: flex; gap: 10px; align-items: center; width: 100%; justify-content: center; }
+
+  button {
+    background: #C9A84C;
+    color: #0d1b3e;
+    border: none; border-radius: 14px;
+    padding: 10px 22px;
+    font-size: 14px; font-weight: 700;
+    cursor: pointer;
+    font-family: 'Vazirmatn', Tahoma, sans-serif;
+    transition: all 0.2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  button:active { transform: scale(0.95); }
+  button.secondary {
+    background: #1a2a50; color: #C9A84C;
+    border: 1px solid #C9A84C44; flex: 1;
+  }
+  button.today-btn { padding: 10px 28px; }
+
+  .download-btn {
+    background: linear-gradient(135deg, #C9A84C, #FFD700);
+    color: #0d1b3e; border: none; border-radius: 14px;
+    padding: 12px 0; font-size: 15px; font-weight: 900;
+    cursor: pointer; width: 100%;
+    font-family: 'Vazirmatn', Tahoma, sans-serif;
+    box-shadow: 0 4px 20px #C9A84C44;
+  }
+
+  .install-banner {
+    background: #1a2a50;
+    border: 1px solid #C9A84C44;
+    border-radius: 14px;
+    padding: 12px 16px;
+    color: #C9A84C;
+    font-size: 12px;
+    text-align: center;
+    line-height: 1.8;
+    width: 100%;
+    display: none;
+  }
+
+  .install-banner.show { display: block; }
+
+  /* toast */
+  .toast {
+    position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: #C9A84C; color: #0d1b3e;
+    padding: 10px 24px; border-radius: 20px;
+    font-size: 13px; font-weight: 700;
+    font-family: 'Vazirmatn', Tahoma, sans-serif;
+    transition: transform 0.3s ease;
+    z-index: 999;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="sticker" id="sticker" onclick="shareSticker()">
+  <div class="glow-bg"></div>
+  <div class="brand">
+    <div class="brand-name">اتو پورمند</div>
+    <div class="brand-sub">AUTO POURMAND</div>
+    <div class="divider-gold"></div>
+  </div>
+  <div class="date-block">
+    <div class="day-name-fa" id="dayNameFa"></div>
+    <div class="day-number" id="dayNum"></div>
+    <div class="month-year-fa" id="monthYearFa"></div>
+  </div>
+  <div class="miladi-row">
+    <div class="miladi-line"></div>
+    <div class="miladi-text" id="miladiText"></div>
+    <div class="miladi-line"></div>
+  </div>
+</div>
+
+<div class="controls">
+  <div class="nav-row">
+    <button class="secondary" onclick="changeDay(-1)">◀ دیروز</button>
+    <button class="today-btn" onclick="goToday()">امروز</button>
+    <button class="secondary" onclick="changeDay(1)">فردا ▶</button>
+  </div>
+  <button class="download-btn" onclick="downloadSticker()">⬇ ذخیره استیکر امروز</button>
+  <div class="install-banner" id="installBanner">
+    📲 برای نصب روی گوشی:<br>
+    منوی Chrome ← «افزودن به صفحه اصلی»
+  </div>
+</div>
+
+<div class="toast" id="toast">استیکر ذخیره شد ✓</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+const persianMonths = ['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
+const persianDays = ['یکشنبه','دوشنبه','سه‌شنبه','چهارشنبه','پنجشنبه','جمعه','شنبه'];
+const engDays = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const engMonths = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+function toEnDigit(n) {
+  return String(n).replace(/[0-9]/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
+}
+
+function toJalali(gy, gm, gd) {
+  const g_d_no = [0,31,59,90,120,151,181,212,243,273,304,334];
+  let jy, jm, jd, g_y2, days;
+  if (gy > 1600) { jy = 979; gy -= 1600; } else { jy = 0; gy -= 621; }
+  g_y2 = (gm > 2) ? (gy + 1) : gy;
+  days = (365*gy) + Math.floor((g_y2+3)/4) - Math.floor((g_y2+99)/100) + Math.floor((g_y2+399)/400) - 80 + gd + g_d_no[gm-1];
+  jy += 33*Math.floor(days/12053); days %= 12053;
+  jy += 4*Math.floor(days/1461); days %= 1461;
+  if (days > 365) { jy += Math.floor((days-1)/365); days = (days-1)%365; }
+  jm = (days < 186) ? 1+Math.floor(days/31) : 7+Math.floor((days-186)/30);
+  jd = 1+((days < 186) ? (days%31) : ((days-186)%30));
+  return [jy, jm, jd];
+}
+
+let currentDate = new Date();
+
+function updateSticker(date) {
+  const [jy, jm, jd] = toJalali(date.getFullYear(), date.getMonth()+1, date.getDate());
+  const dow = date.getDay();
+  document.getElementById('dayNameFa').textContent = persianDays[dow];
+  document.getElementById('dayNum').textContent = toEnDigit(jd);
+  document.getElementById('monthYearFa').textContent = persianMonths[jm-1] + ' ' + toEnDigit(jy);
+  document.getElementById('miladiText').textContent = engDays[dow] + ', ' + engMonths[date.getMonth()] + ' ' + date.getDate() + ', ' + date.getFullYear();
+}
+
+function changeDay(delta) {
+  currentDate = new Date(currentDate);
+  currentDate.setDate(currentDate.getDate() + delta);
+  updateSticker(currentDate);
+}
+
+function goToday() {
+  currentDate = new Date();
+  updateSticker(currentDate);
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function downloadSticker() {
+  html2canvas(document.getElementById('sticker'), {
+    scale: 3, backgroundColor: null, useCORS: true
+  }).then(canvas => {
+    canvas.toBlob(blob => {
+      if (navigator.share && navigator.canShare({files:[]})) {
+        const file = new File([blob], 'pourmand.png', {type:'image/png'});
+        navigator.share({ files: [file], title: 'اتو پورمند' }).catch(()=>{});
+      } else {
+        const link = document.createElement('a');
+        link.download = 'pourmand_sticker.png';
+        link.href = URL.createObjectURL(blob);
+        link.click();
+      }
+    });
+    showToast('استیکر آماده شد ✓');
+  });
+}
+
+function shareSticker() {
+  // tap on sticker = download
+  downloadSticker();
+}
+
+// PWA install hint
+window.addEventListener('load', () => {
+  const isAndroid = /Android/i.test(navigator.userAgent);
+  const isChrome = /Chrome/i.test(navigator.userAgent);
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+  if (!isStandalone && isAndroid && isChrome) {
+    document.getElementById('installBanner').classList.add('show');
+  }
+});
+
+// Service Worker
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
+}
+
+updateSticker(currentDate);
+</script>
+</body>
+</html>
